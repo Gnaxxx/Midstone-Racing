@@ -47,27 +47,61 @@ void SceneA::OnDestroy() {}
 
 void SceneA::Update(const float deltaTime) {
 
-	
-	car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-
 	car->Update(deltaTime);
 }
 
 void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
-			car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
+			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
 		}
 	}
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
-			//while (balloon->getVelocity().x != 0) {
 			car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-			//}
+			car->isMoving(false);
 		}
 	}
 
+	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
+			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
+			car->isMoving(true);
+		}
+	}
+	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
+			car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
+			car->isMoving(false);
+		}
+	}
+
+	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
+			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
+			car->isMoving(true);
+		}
+	}
+	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
+			car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
+			car->isMoving(false);
+		}
+	}
+
+	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
+			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
+			car->isMoving(true);
+		}
+	}
+	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
+		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
+			car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
+			car->isMoving(false);
+		}
+	}
 }
 
 void SceneA::Render() {

@@ -39,7 +39,7 @@ bool GameManager::OnCreate() {
 		return false;
 	}
 
-	currentScene = new Scene1(windowPtr->GetSDL_Window());
+	currentScene = new SceneA(windowPtr->GetSDL_Window());
 	if (currentScene == nullptr) {
 		OnDestroy();
 		return false;
