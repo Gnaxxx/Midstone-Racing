@@ -4,6 +4,7 @@
 #include "MMath.h"
 #include "Scene.h"
 #include <SDL.h>
+#include <vector>
 #include "Body.h"
 
 using namespace MATH;
@@ -13,6 +14,7 @@ private:
 	SDL_Renderer* renderer;
 	Matrix4 projectionMatrix;
 	Body* car;
+	std::vector<Body*> tracks;
 
 
 public:

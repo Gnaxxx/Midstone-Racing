@@ -38,9 +38,9 @@ void Body::ApplyForce(Vec3 force) {
 
 void Body::Update(float deltaTime){
 
-	if (is_moving == false) {
+	/*if (is_moving == false) {
 		return;
-	}
+	}*/
 
 	Vec3 gravity(0.0f, -9.81f, 0.0f);
 	pos += vel * deltaTime + 0.5f * accel * deltaTime * deltaTime; //+ 0.5f * gravity * deltaTime * deltaTime;
@@ -75,5 +75,6 @@ void Body::Update(float deltaTime){
 		vel.x = -vel.x;
 
 	}*/
+
 	
 }
