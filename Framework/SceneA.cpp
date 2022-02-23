@@ -13,8 +13,8 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 		printf("%s\n", SDL_GetError());
 	}
 	car = new Body(Vec3(12.0f, 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
-	for (int i = 0; i < 3; ++i) {
-		tracks.push_back(new Body(Vec3(12.0f, i*7 + 4.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	for (int i = 0; i < 8; ++i) {
+		tracks.push_back(new Body(Vec3(12.0f, i*1.5f + 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	}
 	
 
@@ -35,9 +35,11 @@ bool SceneA::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	Matrix4 ndc = MMath::viewportNDC(w, h);
-	Matrix4 ortho = MMath::orthographic(0.0f, 30.0f, 0.0f, 15.0f, 0.0f, 1.0f);
+	//printf("%d | %d", w, h);
+	Matrix4 ortho = MMath::orthographic(0.0f, 30.0f, 0.0f, 7.5f, 0.0f, 1.0f);
 	projectionMatrix = ndc * ortho;
 	IMG_Init(IMG_INIT_PNG);
+
 	SDL_Surface* carImage = IMG_Load("textures/yellowCar.png");
 	SDL_Texture* carTexture = SDL_CreateTextureFromSurface(renderer, carImage);
 	if (carImage == nullptr) {
@@ -67,7 +69,16 @@ void SceneA::OnDestroy() {}
 
 void SceneA::Update(const float deltaTime) {
 
+	//int w, h;
+	//SDL_GetWindowSize(window, &w, &h);
+
+	/*Matrix4 ndc = MMath::viewportNDC(2560, 1440);
+	Matrix4 ortho = MMath::orthographic(0.0f, car->getPos().x*2.5f, 0.0f, car->getPos().y * 1.5f, 0.0f, 1.0f);
+	projectionMatrix = ndc * ortho;
+	IMG_Init(IMG_INIT_PNG);*/
+
 	car->Update(deltaTime);
+	
 	
 
 }
@@ -78,6 +89,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
 			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
 			car->isMoving(true);
+			printf("(%f, %f)", car->getPos().x, car->getPos().y);
 
 		}
 	}
@@ -101,6 +113,8 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
 			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
+			printf("(%f, %f)", car->getPos().x, car->getPos().y);
+
 		}
 	}
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
@@ -123,6 +137,8 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
 			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
 			car->isMoving(true);
+			printf("(%f, %f)", car->getPos().x, car->getPos().y);
+
 		}
 	}
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
@@ -145,6 +161,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
 			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
+			printf("(%f, %f)", car->getPos().x, car->getPos().y);
 
 		}
 	}
@@ -179,8 +196,8 @@ void SceneA::Render() {
 		SDL_QueryTexture(tracks[i]->getTexture(), nullptr, nullptr, &w, &h);
 		square.x = static_cast<int>(screenCoords.x);
 		square.y = static_cast<int>(screenCoords.y);
-		square.w = w * 2;
-		square.h = h * 2;
+		square.w = w;
+		square.h = h;
 		SDL_RenderCopyEx(renderer, tracks[i]->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 	}
 
@@ -189,8 +206,8 @@ void SceneA::Render() {
 	SDL_QueryTexture(car->getTexture(), nullptr, nullptr, &w, &h);
 	square.x = static_cast<int>(screenCoords.x);
 	square.y = static_cast<int>(screenCoords.y);
-	square.w = w / 3;
-	square.h = h / 3;
+	square.w = w / 5;
+	square.h = h / 5;
 	//SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 
 	
