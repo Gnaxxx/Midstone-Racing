@@ -153,6 +153,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MMath.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="Randomizer.cpp" />
     <ClCompile Include="Scene0.cpp" />
     <ClCompile Include="Scene1.cpp" />
@@ -175,6 +176,8 @@
     <ClInclude Include="MMath.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Randomizer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scene0.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="Scene4.h" />
     <ClInclude Include="Scene5.h" />
     <ClInclude Include="SceneA.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VMath.h" />

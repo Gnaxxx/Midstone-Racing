@@ -35,7 +35,7 @@ bool SceneA::OnCreate() {
 	SDL_GetWindowSize(window, &w, &h);
 
 	Matrix4 ndc = MMath::viewportNDC(w, h);
-	//printf("%d | %d", w, h);
+	printf("%d | %d", w, h);
 	Matrix4 ortho = MMath::orthographic(0.0f, 30.0f, 0.0f, 7.5f, 0.0f, 1.0f);
 	projectionMatrix = ndc * ortho;
 	IMG_Init(IMG_INIT_PNG);
@@ -69,13 +69,13 @@ void SceneA::OnDestroy() {}
 
 void SceneA::Update(const float deltaTime) {
 
-	//int w, h;
-	//SDL_GetWindowSize(window, &w, &h);
+	int w, h;
+	SDL_GetWindowSize(window, &w, &h);
 
-	/*Matrix4 ndc = MMath::viewportNDC(2560, 1440);
+	Matrix4 ndc = MMath::viewportNDC(w, h);
 	Matrix4 ortho = MMath::orthographic(0.0f, car->getPos().x*2.5f, 0.0f, car->getPos().y * 1.5f, 0.0f, 1.0f);
 	projectionMatrix = ndc * ortho;
-	IMG_Init(IMG_INIT_PNG);*/
+	IMG_Init(IMG_INIT_PNG);
 
 	car->Update(deltaTime);
 	
@@ -222,6 +222,7 @@ void SceneA::Render() {
 
 		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 180 - angle, nullptr, SDL_FLIP_HORIZONTAL);
 		SDL_RenderPresent(renderer);
+		
 	}
 
 	//SDL_RenderPresent(renderer);
