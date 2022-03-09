@@ -227,3 +227,28 @@ void SceneA::Render() {
 
 	//SDL_RenderPresent(renderer);
 }
+
+/*
+//player cannot run off screen (Screen Collision)
+
+int main()
+{
+	//left side  
+	if (yellowCar.getPosition().x < 0.0f)
+		yellowCar.setPosition(0.0f, player.getPosition().y);
+
+	//right side 
+	if (yellowCar.getPosition().x + player.getGlobalBounds().width > WINDOW_WIDTH)
+		yellowCar.setPosition(WINDOW_WIDTH - yellowCar.getGlobalBounds().width, yellowCar.getPosition().y);
+
+	//top side 
+	if(yellowCar.getPosition().y < 0.0f))
+	yellowCar.setPosition(player.getPosition().x, 0.0f);
+	
+	//bottom side 
+	if (yellowCar.getPosition().y + player.getGlobalBounds().height > WINDOW_HEIGHT)
+		yellowCar.setPosition(yellowCar.getPosition().x, WNDOW_HEIGHT - yellowCar.getGlobalBounds().height); 
+}  
+*/ 
+
+ 
