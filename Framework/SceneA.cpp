@@ -252,4 +252,40 @@ int main()
 */ 
 //hello world!!!
 
- 
+
+/* //Menu.....ish
+
+using namespace std; 
+
+int menu; //stores user's number choice
+
+int main() 
+{
+	cout << "Welcome TO The Game!" << endl;
+	cout << "1-Play" << endl;
+	cout << "2-Options" << endl;
+	cout << "3-Quit" << endl;
+	cin >> menu; 
+
+	if (menu == 1)
+	{
+		cout << "I do not actually know how to make it switch scenes" << endl; 
+	}
+
+	if (menu == 2)
+	{
+		cout << "I do not actually know how to make it switch scenes, too" << endl;
+	}
+
+	if (menu == 3)
+	{
+		return 0; 
+	}
+
+	else
+	{
+		cout << "this is a bad basic menu, try again" << endl;
+		return 0;
+	}
+	return 0;
+} */ 
