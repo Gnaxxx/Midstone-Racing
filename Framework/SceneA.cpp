@@ -70,7 +70,7 @@ void SceneA::OnDestroy() {}
 void SceneA::Update(const float deltaTime) {
 
 	for (int i = 0; i < tracks.size(); ++i) {
-		if (car->getPos().x > tracks[i]->getPos().x - 5.0f || car->getPos().x < tracks[i]->getPos().x + 1.0f) {
+		if (car->getPos().x > tracks[i]->getPos().x - 1.0f || car->getPos().x < tracks[i]->getPos().x + 1.0f) {
 			int w, h;
 			SDL_GetWindowSize(window, &w, &h);
 
@@ -82,7 +82,7 @@ void SceneA::Update(const float deltaTime) {
 	/*
 	* 
 	*/
-	}
+		}
 		else {
 			//car->setPos(car->getPos());
 			printf("oafsjk");

@@ -14,6 +14,7 @@ private:
 	SDL_Renderer* renderer;
 	Matrix4 projectionMatrix;
 	Body* car;
+	//Body* track;
 	std::vector<Body*> tracks;
 
 
