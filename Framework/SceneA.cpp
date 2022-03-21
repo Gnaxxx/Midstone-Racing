@@ -249,6 +249,7 @@ int main()
 	if (yellowCar.getPosition().y + player.getGlobalBounds().height > WINDOW_HEIGHT)
 		yellowCar.setPosition(yellowCar.getPosition().x, WNDOW_HEIGHT - yellowCar.getGlobalBounds().height); 
 }  
+player.GetGlobalBounds.width is something to do with the screen minus the width of the player (don't remember the exact words)
 */ 
 //hello world!!!
 
