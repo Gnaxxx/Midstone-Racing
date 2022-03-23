@@ -78,7 +78,6 @@ void SceneA::Update(const float deltaTime) {
 			Matrix4 ortho = MMath::orthographic(car->getPos().x - 2.0f, car->getPos().x + 3.0f, car->getPos().y - 2.0f, car->getPos().y + 1.0f, 0.0f, 1.0f);
 			projectionMatrix = ndc * ortho;
 			IMG_Init(IMG_INIT_PNG);
-
 	/*
 	* 
 	*/
