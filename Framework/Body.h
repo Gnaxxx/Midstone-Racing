@@ -14,6 +14,8 @@ private:
 	float rotationZ;
 	float mass;
 	float rad;
+	float length;
+	float width;
 	SDL_Surface *image;
 	SDL_Texture* texture;
 	bool is_moving = false;
@@ -38,6 +40,8 @@ public:
 	void setVelocity(Vec3 vel_) { vel = vel_; }
 	float getMass() { return mass;  }
 	float getRadius() { return rad; }
+	float getLength() { return length; }
+	float getWidth() { return width; }
 	float getRotationZ() { return rotationZ; }
 	//void scale(Vec3 scale_) { return scaled = scale_; }
 };

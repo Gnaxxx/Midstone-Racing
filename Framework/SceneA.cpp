@@ -13,8 +13,8 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 		printf("%s\n", SDL_GetError());
 	}
 	car = new Body(Vec3(12.75f, 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
-	for (int i = 0; i < 1; ++i) {
-		tracks.push_back(new Body(Vec3(12.0f, i*2.5f + 10.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	for (int i = 0; i < 6; ++i) {
+		tracks.push_back(new Body(Vec3(12.0f, i*2.5f + 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	}
 	
 
@@ -70,7 +70,14 @@ void SceneA::OnDestroy() {}
 void SceneA::Update(const float deltaTime) {
 
 	for (int i = 0; i < tracks.size(); ++i) {
-		if (car->getPos().x > tracks[i]->getPos().x - 1.0f || car->getPos().x < tracks[i]->getPos().x + 1.0f) {
+		tracks[i]->Update(deltaTime);
+	}
+
+	for (int i = 0; i < tracks.size(); ++i) {
+
+		Vec3 prevPos;
+
+		if (car->getPos().x > tracks[i]->getPos().x - 2.0f && car->getPos().x < tracks[i]->getPos().x + 2.0f) {
 			int w, h;
 			SDL_GetWindowSize(window, &w, &h);
 
@@ -78,13 +85,26 @@ void SceneA::Update(const float deltaTime) {
 			Matrix4 ortho = MMath::orthographic(car->getPos().x - 2.0f, car->getPos().x + 3.0f, car->getPos().y - 2.0f, car->getPos().y + 1.0f, 0.0f, 1.0f);
 			projectionMatrix = ndc * ortho;
 			IMG_Init(IMG_INIT_PNG);
+
+			prevPos = car->getPos();
 	/*
 	* 
 	*/
 		}
 		else {
-			//car->setPos(car->getPos());
-			printf("oafsjk");
+
+			/*SDL_Surface* carImage = IMG_Load("textures/flappybird.png");
+			SDL_Texture* carTexture = SDL_CreateTextureFromSurface(renderer, carImage);
+			if (carImage == nullptr) {
+				printf("Can't open textures/flappybird.png\n");
+				
+			}*/
+			car->setTexture(nullptr);
+
+			car->setPos(prevPos);
+
+			isDead = true;
+			//printf("oafsjk");
 		}
 	}
 	
@@ -203,13 +223,14 @@ void SceneA::Render() {
 	Vec3 screenCoords;
 	int w, h;
 
+
 	for (int i = 0; i < tracks.size(); ++i) {
 		screenCoords = projectionMatrix * tracks[i]->getPos();
 		SDL_QueryTexture(tracks[i]->getTexture(), nullptr, nullptr, &w, &h);
 		square.x = static_cast<int>(screenCoords.x);
 		square.y = static_cast<int>(screenCoords.y);
 		square.w = w * 4;
-		square.h = h * 15;
+		square.h = h * 4;
 		SDL_RenderCopyEx(renderer, tracks[i]->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 		
 	}
