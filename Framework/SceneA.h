@@ -16,6 +16,7 @@ private:
 	Body* car;
 	//Body* track;
 	std::vector<Body*> tracks;
+	std::vector<Body*> obstacles;
 	bool isDead = false;
 
 

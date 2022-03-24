@@ -3,6 +3,8 @@
 #include <SDL_image.h>
 #include <math.h>
 #include "Timer.h"
+#include "Randomizer.h"
+#include "VMath.h"
 
 #define PI 3.14159265
 
@@ -13,9 +15,18 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 		printf("%s\n", SDL_GetError());
 	}
 	car = new Body(Vec3(12.75f, 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
+	car->setRadius(0.1f);
 	for (int i = 0; i < 6; ++i) {
 		tracks.push_back(new Body(Vec3(12.0f, i*2.5f + 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	}
+	
+	obstacles.push_back(new Body(Vec3(12.2f, 6.5f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	obstacles.push_back(new Body(Vec3(13.0f, 10.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+
+	for (int i = 0; i < obstacles.size(); ++i) {
+		obstacles[i]->setRadius(0.1f);
+	}
+
 	
 
 	Timer::SetSingleEvent(5000, (void*)"Start");
@@ -59,8 +70,20 @@ bool SceneA::OnCreate() {
 		tracks[i]->setTexture(trackTexture);
 	}
 
+	SDL_Surface* obstacleImage = IMG_Load("textures/PeepoPing.png");
+	SDL_Texture* obstacleTexture = SDL_CreateTextureFromSurface(renderer, obstacleImage);
+	if (obstacleImage == nullptr) {
+		printf("Can't open textures/PeepoPing.png\n");
+		return false;
+	}
+
+	for (int i = 0; i < obstacles.size(); ++i) {
+		obstacles[i]->setTexture(obstacleTexture);
+	}
+
 	SDL_FreeSurface(carImage);
 	SDL_FreeSurface(trackImage);
+	SDL_FreeSurface(obstacleImage);
 
 	return true;
 }
@@ -73,11 +96,25 @@ void SceneA::Update(const float deltaTime) {
 		tracks[i]->Update(deltaTime);
 	}
 
+	for (int i = 0; i < obstacles.size(); ++i) {
+		obstacles[i]->Update(deltaTime);
+	}
+
 	for (int i = 0; i < tracks.size(); ++i) {
 
 		Vec3 prevPos;
 
 		if (car->getPos().x > tracks[i]->getPos().x - 2.0f && car->getPos().x < tracks[i]->getPos().x + 2.0f) {
+			
+			for (int i = 0; i < obstacles.size(); ++i) {
+				float dist = VMath::distance(car->getPos(), obstacles[i]->getPos());
+				if (dist < car->getRadius() + obstacles[i]->getRadius()) {
+					car->setTexture(nullptr);
+					car->setPos(prevPos);
+				}
+
+			}
+
 			int w, h;
 			SDL_GetWindowSize(window, &w, &h);
 
@@ -87,10 +124,8 @@ void SceneA::Update(const float deltaTime) {
 			IMG_Init(IMG_INIT_PNG);
 
 			prevPos = car->getPos();
-	/*
-	* 
-	*/
 		}
+
 		else {
 
 			/*SDL_Surface* carImage = IMG_Load("textures/flappybird.png");
@@ -104,8 +139,11 @@ void SceneA::Update(const float deltaTime) {
 			car->setPos(prevPos);
 
 			isDead = true;
-			//printf("oafsjk");
+			
 		}
+
+		
+
 	}
 	
 
@@ -235,6 +273,17 @@ void SceneA::Render() {
 		
 	}
 
+	for (int i = 0; i < obstacles.size(); ++i) {
+		screenCoords = projectionMatrix * obstacles[i]->getPos();
+		SDL_QueryTexture(obstacles[i]->getTexture(), nullptr, nullptr, &w, &h);
+		square.x = static_cast<int>(screenCoords.x);
+		square.y = static_cast<int>(screenCoords.y);
+		square.w = w;
+		square.h = h;
+		SDL_RenderCopyEx(renderer, obstacles[i]->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
+
+	}
+
 
 	screenCoords = projectionMatrix * car->getPos();
 	SDL_QueryTexture(car->getTexture(), nullptr, nullptr, &w, &h);
@@ -258,6 +307,8 @@ void SceneA::Render() {
 		SDL_RenderPresent(renderer);
 		
 	}
+
+	
 
 	//SDL_RenderPresent(renderer);
 }

@@ -38,6 +38,7 @@ public:
 	void setPos(Vec3 pos_) { pos = pos_; }
 	void setAccel(Vec3 accel_) { accel = accel_; }
 	void setVelocity(Vec3 vel_) { vel = vel_; }
+	void setRadius(float rad_) { rad = rad_; }
 	float getMass() { return mass;  }
 	float getRadius() { return rad; }
 	float getLength() { return length; }
