@@ -5,6 +5,10 @@
 #include "Timer.h"
 #include "Randomizer.h"
 #include "VMath.h"
+#include <iostream>
+#include <windows.h>
+#include <MMSystem.h>
+using namespace std;
 
 #define PI 3.14159265
 
@@ -373,5 +377,12 @@ int main()
 		cout << "this is a bad basic menu, try again" << endl;
 		return 0;
 	}
+	return 0;
+} */
+
+//Music
+/* int main()
+{
+	PlaySound(TEXT("Victory.wav"), NULL, SND_ASYNC);
 	return 0;
 } */ 
