@@ -39,7 +39,10 @@ bool GameManager::OnCreate() {
 		return false;
 	}
 
-	currentScene = new SceneA(windowPtr->GetSDL_Window());
+	//currentScene = new SceneA(windowPtr->GetSDL_Window());
+
+	BuildScene(SCENE0);
+
 	if (currentScene == nullptr) {
 		OnDestroy();
 		return false;
@@ -57,8 +60,9 @@ bool GameManager::OnCreate() {
 void GameManager::Run() {
 	SDL_Event sdlEvent;
 	timer->Start();
+	isRunning = true;
 	while (isRunning) {
-		while (SDL_PollEvent(&sdlEvent) != 0) {
+		/*while (SDL_PollEvent(&sdlEvent) != 0) {
 
 			if (sdlEvent.type == SDL_EventType::SDL_QUIT) {
 				isRunning = false;
@@ -67,20 +71,99 @@ void GameManager::Run() {
 				if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 					isRunning = false;
 				}
-				/*else if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_Q) {
+				else if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_Q) {
 					isRunning = false;
-				}*/
+				}
 			}
 			currentScene->HandleEvents(sdlEvent);
-		}
+		}*/
+
 
 		timer->UpdateFrameTicks();
-		currentScene->HandleEvents(sdlEvent);
+		//currentScene->HandleEvents(sdlEvent);
 		currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
-
+		GetEvents();
+		SDL_GL_SwapWindow(windowPtr->GetSDL_Window());
 		/// Keeep the event loop running at a proper rate
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
+	}
+}
+
+void GameManager::GetEvents() {
+	SDL_Event sdlEvent;
+	while (SDL_PollEvent(&sdlEvent)) {
+		const Uint8* state = SDL_GetKeyboardState(nullptr); /// Do not free this! Read the docs
+		if (sdlEvent.type == SDL_EventType::SDL_QUIT) {
+			isRunning = false;
+			return;
+		}
+		else if (sdlEvent.type == SDL_KEYDOWN) {
+			switch (sdlEvent.key.keysym.scancode) {
+			case SDL_SCANCODE_ESCAPE:
+			case SDL_SCANCODE_Q:
+				isRunning = false;
+				return;
+
+			
+			case SDL_SCANCODE_F1:
+				if (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT]) {
+
+				}
+				else {
+					BuildScene(SCENE0);
+				}
+				break;
+
+			case SDL_SCANCODE_F2:
+				if (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT]) {
+
+				}
+				else {
+					BuildScene(SCENEA);
+				}
+				break;
+
+			
+
+			default:
+				currentScene->HandleEvents(sdlEvent);
+				break;
+			}
+		}
+		if (currentScene == nullptr) {
+			//Debug::FatalError("Failed to initialize Scene", __FILE__, __LINE__);
+			isRunning = false;
+			return;
+		}
+		currentScene->HandleEvents(sdlEvent);
+	}
+}
+
+void GameManager::BuildScene(SCENE_NUMBER scene) {
+	bool status;
+
+	if (currentScene != nullptr) {
+		currentScene->OnDestroy();
+		delete currentScene;
+		currentScene = nullptr;
+	}
+
+	switch (scene) {
+	case SCENE0:
+		currentScene = new Scene0(windowPtr->GetSDL_Window());
+		status = currentScene->OnCreate();
+		break;
+
+	case SCENEA:
+		currentScene = new SceneA(windowPtr->GetSDL_Window());
+		status = currentScene->OnCreate();
+		break;
+
+	default:
+		//Debug::Error("Incorrect scene number assigned in the manager", __FILE__, __LINE__);
+		currentScene = nullptr;
+		break;
 	}
 }
 

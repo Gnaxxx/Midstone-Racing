@@ -13,11 +13,19 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	Matrix4 projectionMatrix;
+	Matrix4 invProjectionMatrix;
 	Body* car;
+	Body* enemy;
 	//Body* track;
 	std::vector<Body*> tracks;
 	std::vector<Body*> obstacles;
-	bool isDead = false;
+	//bool isDead = false;
+
+	bool gameStart = false;
+	bool isForward;
+	bool isLeft;
+	bool isBackward;
+	bool isRight;
 
 
 public:

@@ -1,6 +1,7 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 #include <SDL.h>
+#include <string>
 #include "Scene.h"
 
 class GameManager {
@@ -14,16 +15,23 @@ private:
 	/// If that was too much for your brain, just #include "Window.h" and declare
 	/// Window *ptr and don't use the word "class"  This is a second semester C++
 	/// topic anyway
-	class Window *windowPtr;
-	class Timer *timer;
+
+	enum SCENE_NUMBER {
+		SCENE0,
+		SCENEA,
+	};
+	class Window* windowPtr;
+	class Timer* timer;
 	bool isRunning;
-	Scene *currentScene;
+	Scene* currentScene;
+	void BuildScene(SCENE_NUMBER scene_);
 
 public:
 	GameManager();
 	~GameManager();
 	bool OnCreate();
 	void OnDestroy();
+	void GetEvents();
 
 	void Run();
 };

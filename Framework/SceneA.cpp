@@ -6,6 +6,10 @@
 #include "Randomizer.h"
 #include "VMath.h"
 
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+
 #define PI 3.14159265
 
 SceneA::SceneA(SDL_Window* sdlWindow_) {
@@ -15,7 +19,11 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 		printf("%s\n", SDL_GetError());
 	}
 	car = new Body(Vec3(12.75f, 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
-	car->setRadius(0.1f);
+	car->setRadius(0.14f);
+
+	enemy = new Body(Vec3(12.25f, 4.4f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
+	enemy->setRadius(0.14f);
+
 	for (int i = 0; i < 6; ++i) {
 		tracks.push_back(new Body(Vec3(12.0f, i*2.5f + 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	}
@@ -24,7 +32,7 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 	obstacles.push_back(new Body(Vec3(13.0f, 10.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 
 	for (int i = 0; i < obstacles.size(); ++i) {
-		obstacles[i]->setRadius(0.1f);
+		obstacles[i]->setRadius(0.14f);
 	}
 
 	
@@ -35,6 +43,7 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 
 SceneA::~SceneA() {
 	delete car;
+	delete enemy;
 	for (Body* body : tracks) {
 		delete body;
 	}
@@ -49,6 +58,7 @@ bool SceneA::OnCreate() {
 	printf("%d | %d", w, h);
 	Matrix4 ortho = MMath::orthographic(0.0f, 30.0f, 0.0f, 7.5f, 0.0f, 1.0f);
 	projectionMatrix = ndc * ortho;
+	invProjectionMatrix = MMath::inverse(projectionMatrix);
 	IMG_Init(IMG_INIT_PNG);
 
 	SDL_Surface* carImage = IMG_Load("textures/yellowCar.png");
@@ -57,7 +67,23 @@ bool SceneA::OnCreate() {
 		printf("Can't open textures/yellowCar.png\n");
 		return false;
 	}
+
+	/*Vec3 upperLeft(0.0f, 0.0f, 0.0f); //Screen Coords
+	Vec3 lowerRight(static_cast<float>(carImage->w), static_cast<float>(carImage->h), 0.0f);
+	Vec3 ulWorld = invProjectionMatrix * upperLeft;
+	Vec3 lrWorld = invProjectionMatrix * lowerRight;
+	Vec3 worldCoordsFromScreenCoords = lrWorld - ulWorld;
+	float carRad = worldCoordsFromScreenCoords.x / 2.0f;
+	car->setRadius(carRad);*/
 	car->setTexture(carTexture);
+
+	SDL_Surface* enemyImage = IMG_Load("textures/flappybird.png");
+	SDL_Texture* enemyTexture = SDL_CreateTextureFromSurface(renderer, enemyImage);
+	if (enemyImage == nullptr) {
+		printf("Can't open textures/flappybird.png\n");
+		return false;
+	}
+	enemy->setTexture(enemyTexture);
 
 	SDL_Surface* trackImage = IMG_Load("textures/track.png");
 	SDL_Texture* trackTexture = SDL_CreateTextureFromSurface(renderer, trackImage);
@@ -75,6 +101,7 @@ bool SceneA::OnCreate() {
 	if (obstacleImage == nullptr) {
 		printf("Can't open textures/PeepoPing.png\n");
 		return false;
+		
 	}
 
 	for (int i = 0; i < obstacles.size(); ++i) {
@@ -92,6 +119,8 @@ void SceneA::OnDestroy() {}
 
 void SceneA::Update(const float deltaTime) {
 
+	std::cout << "(" << car->getVelocity().x << ", " << car->getVelocity().y <<  ")" << std::endl;
+
 	for (int i = 0; i < tracks.size(); ++i) {
 		tracks[i]->Update(deltaTime);
 	}
@@ -107,7 +136,7 @@ void SceneA::Update(const float deltaTime) {
 		if (car->getPos().x > tracks[i]->getPos().x - 2.0f && car->getPos().x < tracks[i]->getPos().x + 2.0f) {
 			
 			for (int i = 0; i < obstacles.size(); ++i) {
-				float dist = VMath::distance(car->getPos(), obstacles[i]->getPos());
+				float dist = VMath::distance(Vec3(car->getPos().x-0.2f, car->getPos().y, 0.0f), Vec3(obstacles[i]->getPos().x-0.2f, obstacles[i]->getPos().y, 0.0f));
 				if (dist < car->getRadius() + obstacles[i]->getRadius()) {
 					car->setTexture(nullptr);
 					car->setPos(prevPos);
@@ -136,20 +165,57 @@ void SceneA::Update(const float deltaTime) {
 			}*/
 			car->setTexture(nullptr);
 
-			car->setPos(prevPos);
+			//car->setPos(prevPos);
 
-			isDead = true;
+			//isDead = true;
 			
 		}
 
-		
+	}
+
+
+	if (car->getIs_Moving() == false) {
+		//car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
+		car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
+		car->setAccel(Vec3(0.0f, 0.0f, 0.0f));
 
 	}
-	
 
 	car->Update(deltaTime);
-	
-	
+
+	if (gameStart == true) {
+		//printf("yes");
+		Vec3 enemyPrevPos;
+
+		enemy->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
+
+		for (int i = 0; i < obstacles.size(); ++i) {
+			float enemyDist = VMath::distance(Vec3(enemy->getPos().x - 0.2f, enemy->getPos().y, 0.0f), Vec3(obstacles[i]->getPos().x - 0.2f, obstacles[i]->getPos().y, 0.0f));
+
+			if (enemyDist < 1.35f) {
+
+				
+				enemy->ApplyForce(Vec3(0.0f, -10.0f, 0.0f)); //if there is a distance of 1.35 between enemy and obstacle, then slow down
+
+				if (enemy->getVelocity().y <= 0.1f) {
+					
+					enemyPrevPos = enemy->getPos(); //we need to store position as it slows down
+					enemy->ApplyForce(Vec3(10.0f, 0.0f, 0.0f)); //if it stops, push it 10 in the x
+
+					if (enemy->getPos().x - enemyPrevPos.x == 0.2f) {
+						enemy->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f)); //if the enemy travels 0.2 then slow down
+						enemy->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
+						
+
+					}
+				}
+			}
+		}
+
+
+	}
+
+	enemy->Update(deltaTime);
 
 }
 
@@ -157,22 +223,21 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 
 	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
+			
+			gameStart = true;
 			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
 			car->isMoving(true);
-			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
 
 		}
 	}
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
+			
 			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
-			car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
-			car->isMoving(false);
+			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
-
-			if (car->getIs_Moving() == false) {
-				car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-				
+			if (car->getVelocity().y <= 1.0f) {
+				car->isMoving(false);
 			}
 			
 		}
@@ -181,6 +246,8 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 
 	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
+			
+			gameStart = true;
 			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -189,14 +256,12 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	}
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
+			
 			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
-			car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
-			car->isMoving(false);
+			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
-
-			if (car->getIs_Moving() == false) {
-				car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-
+			if (car->getVelocity().x >= 1.0f) {
+				car->isMoving(false);
 			}
 
 		}
@@ -205,6 +270,8 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 
 	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
+			
+			gameStart = true;
 			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -214,13 +281,10 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
 			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
-			car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
-			car->isMoving(false);
+			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
-
-			if (car->getIs_Moving() == false) {
-				car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-
+			if (car->getVelocity().y >= 1.0f) {
+				car->isMoving(false);
 			}
 
 		}
@@ -229,6 +293,8 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 
 	if (sdlEvent.type == SDL_EventType::SDL_KEYDOWN) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
+			
+			gameStart = true;
 			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -238,13 +304,10 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
 			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
-			car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
-			car->isMoving(false);
+			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
-
-			if (car->getIs_Moving() == false) {
-				car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
-
+			if (car->getVelocity().x <= 1.0f) {
+				car->isMoving(false);
 			}
 
 		}
@@ -284,6 +347,27 @@ void SceneA::Render() {
 
 	}
 
+	screenCoords = projectionMatrix * enemy->getPos();
+	SDL_QueryTexture(enemy->getTexture(), nullptr, nullptr, &w, &h);
+	square.x = static_cast<int>(screenCoords.x);
+	square.y = static_cast<int>(screenCoords.y);
+	square.w = w * 1.7;
+	square.h = h * 1.7;
+
+	float enemyAngle = atan2(enemy->getVelocity().y, enemy->getVelocity().x) * 180 / PI;
+
+
+	if (enemy->getVelocity().x >= 0.0f) {
+		SDL_RenderCopyEx(renderer, enemy->getTexture(), nullptr, &square, -enemyAngle, nullptr, SDL_FLIP_NONE);
+		SDL_RenderPresent(renderer);
+	}
+	else {
+
+		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 180 - enemyAngle, nullptr, SDL_FLIP_HORIZONTAL);
+		SDL_RenderPresent(renderer);
+
+	}
+
 
 	screenCoords = projectionMatrix * car->getPos();
 	SDL_QueryTexture(car->getTexture(), nullptr, nullptr, &w, &h);
@@ -294,16 +378,16 @@ void SceneA::Render() {
 	//SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 
 	
-	float angle = atan2(car->getVelocity().y, car->getVelocity().x) * 180 / PI;
+	float carAngle = atan2(car->getVelocity().y, car->getVelocity().x) * 180 / PI;
 
 
 	if (car->getVelocity().x >= 0.0f) {
-		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, -angle, nullptr, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, -carAngle, nullptr, SDL_FLIP_NONE);
 		SDL_RenderPresent(renderer);
 	}
 	else {
 
-		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 180 - angle, nullptr, SDL_FLIP_HORIZONTAL);
+		SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 180 - carAngle, nullptr, SDL_FLIP_HORIZONTAL);
 		SDL_RenderPresent(renderer);
 		
 	}
