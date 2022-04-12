@@ -5,6 +5,10 @@
 #include "Timer.h"
 #include "Randomizer.h"
 #include "VMath.h"
+#include <iostream>
+#include <windows.h>
+#include <MMSystem.h>
+using namespace std;
 
 #include <iostream>
 #include <iomanip>
@@ -458,4 +462,11 @@ int main()
 		return 0;
 	}
 	return 0;
-} */ 
+} */
+
+//Music
+/* int main()
+{
+	PlaySound(TEXT("Victory.wav"), NULL, SND_ASYNC);
+	return 0;
+} */
