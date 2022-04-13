@@ -17,7 +17,7 @@ private:
 	/// topic anyway
 
 	enum SCENE_NUMBER {
-		SCENE0,
+		MAINMENU,
 		SCENEA,
 	};
 	class Window* windowPtr;

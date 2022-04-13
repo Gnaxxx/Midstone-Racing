@@ -1,12 +1,7 @@
 #include "GameManager.h"
 #include "Window.h"
 #include "Timer.h"
-#include "Scene0.h"
-#include "Scene1.h"
-#include "Scene2.h"
-#include "Scene3.h"
-#include "Scene4.h"
-#include "Scene5.h"
+#include "MainMenu.h"
 #include "SceneA.h"
 #include <iostream>
 
@@ -41,7 +36,7 @@ bool GameManager::OnCreate() {
 
 	//currentScene = new SceneA(windowPtr->GetSDL_Window());
 
-	BuildScene(SCENE0);
+	BuildScene(MAINMENU);
 
 	if (currentScene == nullptr) {
 		OnDestroy();
@@ -111,11 +106,11 @@ void GameManager::GetEvents() {
 
 				}
 				else {
-					BuildScene(SCENE0);
+					BuildScene(MAINMENU);
 				}
 				break;
 
-			case SDL_SCANCODE_F2:
+			case SDL_SCANCODE_SPACE:
 				if (state[SDL_SCANCODE_RSHIFT] || state[SDL_SCANCODE_LSHIFT]) {
 
 				}
@@ -150,8 +145,8 @@ void GameManager::BuildScene(SCENE_NUMBER scene) {
 	}
 
 	switch (scene) {
-	case SCENE0:
-		currentScene = new Scene0(windowPtr->GetSDL_Window());
+	case MAINMENU:
+		currentScene = new MainMenu(windowPtr->GetSDL_Window());
 		status = currentScene->OnCreate();
 		break;
 
