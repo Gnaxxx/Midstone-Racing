@@ -10,6 +10,7 @@ GameManager::GameManager() {
 	timer = nullptr;
 	isRunning = true;
 	currentScene = nullptr;
+	sceneA = nullptr;
 }
 
 
@@ -94,14 +95,14 @@ void GameManager::GetEvents() {
 			return;
 		}
 
-		else if (sceneA->getIsDead() == true) {
+		else if (sceneA && sceneA->getIsDead()) {
 			BuildScene(GAMEOVER);
 		}
 
 		else if (sdlEvent.type == SDL_KEYDOWN) {
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_ESCAPE:
-			case SDL_SCANCODE_Q:
+			case SDL_SCANCODE_Q: 
 				isRunning = false;
 				return;
 
@@ -162,6 +163,7 @@ void GameManager::BuildScene(SCENE_NUMBER scene) {
 
 	case SCENEA:
 		currentScene = new SceneA(windowPtr->GetSDL_Window());
+		sceneA = (SceneA*) currentScene;
 		status = currentScene->OnCreate();
 		break;
 

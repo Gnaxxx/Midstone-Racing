@@ -181,26 +181,31 @@ void SceneA::Update(const float deltaTime) {
 
 	
 	if (isWReleased == true) {
-		if (car->getVelocity().y <= 0.09f) {
+		if (car->getVelocity().y <= 0.0f) {
 			car->isMoving(false);
+			isWReleased = false;
 		}
 	}
 
-	else if (isAReleased == true) {
-		if (car->getVelocity().x >= -0.09f) {
+	if (isAReleased == true) {
+		if (car->getVelocity().x >= -0.0f) {
 			car->isMoving(false);
+			isAReleased = false;
+
 		}
 	}
 
-	else if (isSReleased == true) {
-		if (car->getVelocity().y >= -0.09f) {
+	if (isSReleased == true) {
+		if (car->getVelocity().y >= -0.0f) {
 			car->isMoving(false);
+			isSReleased = false;
 		}
 	}
 
-	else if (isDReleased == true) {
-		if (car->getVelocity().x <= 0.09f) {
+	if (isDReleased == true) {
+		if (car->getVelocity().x <= 0.0f) {
 			car->isMoving(false);
+			isDReleased = false;
 		}
 	}
 
@@ -209,6 +214,7 @@ void SceneA::Update(const float deltaTime) {
 		//car->ApplyForce(Vec3(0.0f, 0.0f, 0.0f));
 		car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 		car->setAccel(Vec3(0.0f, 0.0f, 0.0f));
+		
 
 	}
 
@@ -235,10 +241,10 @@ void SceneA::Update(const float deltaTime) {
 					
 					enemyPrevPos = enemy->getPos(); //we need to store position as it slows down
 					//std::cout << "(" << enemyPrevPos.x << ", " << enemyPrevPos.y << ")" << std::endl;
-					enemy->ApplyForce(Vec3(3.0f, 0.0f, 0.0f)); //if it stops, push it 10 in the x
+					enemy->ApplyForce(Vec3(10.0f, 0.0f, 0.0f)); //if it stops, push it 10 in the x
 
 					if (abs(enemy->getPos().x - enemyPrevPos.x) == 0.2f) {
-						enemy->ApplyForce(Vec3(-30.0f, 0.0f, 0.0f)); //if the enemy travels 0.2 then slow down
+						enemy->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f)); //if the enemy travels 0.2 then slow down
 
 
 						if (abs(enemy->getVelocity().x) <= 0.1f)
@@ -290,7 +296,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
 			
 			gameStart = true;
-			isWReleased = false;
+			isAReleased = false;
 			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -300,7 +306,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
 			
-			isWReleased = true;
+			isAReleased = true;
 			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
@@ -316,7 +322,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
 			
 			gameStart = true;
-			isWReleased = false;
+			isSReleased = false;
 			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -326,7 +332,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
 
-			isWReleased = true;
+			isSReleased = true;
 			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
@@ -342,7 +348,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
 			
 			gameStart = true;
-			isWReleased = false;
+			isDReleased = false;
 			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
 			car->isMoving(true);
 			//printf("(%f, %f)", car->getPos().x, car->getPos().y);
@@ -352,7 +358,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
 
-			isWReleased = true;
+			isDReleased = true;
 			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
