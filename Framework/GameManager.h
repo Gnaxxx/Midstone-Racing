@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <string>
 #include "Scene.h"
+#include "SceneA.h"
 
 class GameManager {
 private:
@@ -18,13 +19,16 @@ private:
 
 	enum SCENE_NUMBER {
 		MAINMENU,
+		GAMEOVER,
 		SCENEA,
 	};
 	class Window* windowPtr;
 	class Timer* timer;
 	bool isRunning;
 	Scene* currentScene;
+	SceneA* sceneA;
 	void BuildScene(SCENE_NUMBER scene_);
+	
 
 public:
 	GameManager();

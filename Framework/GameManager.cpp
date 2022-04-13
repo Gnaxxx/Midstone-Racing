@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Timer.h"
 #include "MainMenu.h"
-#include "SceneA.h"
+#include "GameOver.h"
 #include <iostream>
 
 GameManager::GameManager() {
@@ -93,6 +93,11 @@ void GameManager::GetEvents() {
 			isRunning = false;
 			return;
 		}
+
+		else if (sceneA->getIsDead() == true) {
+			BuildScene(GAMEOVER);
+		}
+
 		else if (sdlEvent.type == SDL_KEYDOWN) {
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_ESCAPE:
@@ -147,6 +152,11 @@ void GameManager::BuildScene(SCENE_NUMBER scene) {
 	switch (scene) {
 	case MAINMENU:
 		currentScene = new MainMenu(windowPtr->GetSDL_Window());
+		status = currentScene->OnCreate();
+		break;
+
+	case GAMEOVER:
+		currentScene = new GameOver(windowPtr->GetSDL_Window());
 		status = currentScene->OnCreate();
 		break;
 

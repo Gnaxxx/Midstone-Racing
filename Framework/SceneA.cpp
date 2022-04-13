@@ -1,4 +1,5 @@
 #include "SceneA.h"
+#include "GameManager.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <math.h>
@@ -140,6 +141,7 @@ void SceneA::Update(const float deltaTime) {
 			for (int i = 0; i < obstacles.size(); ++i) {
 				float dist = VMath::distance(Vec3(car->getPos().x-0.2f, car->getPos().y, 0.0f), Vec3(obstacles[i]->getPos().x-0.2f, obstacles[i]->getPos().y, 0.0f));
 				if (dist < car->getRadius() + obstacles[i]->getRadius()) {
+					isDead = true;
 					car->setTexture(nullptr);
 					car->setPos(prevPos);
 				}
@@ -174,6 +176,8 @@ void SceneA::Update(const float deltaTime) {
 		}
 
 	}
+
+	//CAR PHYSICS
 
 	
 	if (isWReleased == true) {

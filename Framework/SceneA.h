@@ -19,7 +19,7 @@ private:
 	//Body* track;
 	std::vector<Body*> tracks;
 	std::vector<Body*> obstacles;
-	//bool isDead = false;
+	bool isDead = false;
 
 	bool gameStart = false;
 	
@@ -38,6 +38,8 @@ public:
 	void Update(const float time);
 	void Render();
 	void HandleEvents(const SDL_Event& sdlEvent);
+
+	bool getIsDead() { return isDead; }
 };
 
 #endif
