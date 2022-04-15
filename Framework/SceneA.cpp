@@ -29,12 +29,16 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 	enemy = new Body(Vec3(12.25f, 4.4f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
 	enemy->setRadius(0.14f);
 
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < 20; ++i) {
 		tracks.push_back(new Body(Vec3(12.0f, i*2.5f + 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	}
 	
 	obstacles.push_back(new Body(Vec3(12.2f, 6.5f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	obstacles.push_back(new Body(Vec3(13.0f, 10.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	obstacles.push_back(new Body(Vec3(12.5f, 13.5f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	obstacles.push_back(new Body(Vec3(12.0f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	obstacles.push_back(new Body(Vec3(12.3f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+	obstacles.push_back(new Body(Vec3(13.5f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 
 	for (int i = 0; i < obstacles.size(); ++i) {
 		obstacles[i]->setRadius(0.14f);
@@ -141,9 +145,10 @@ void SceneA::Update(const float deltaTime) {
 			for (int i = 0; i < obstacles.size(); ++i) {
 				float dist = VMath::distance(Vec3(car->getPos().x-0.2f, car->getPos().y, 0.0f), Vec3(obstacles[i]->getPos().x-0.2f, obstacles[i]->getPos().y, 0.0f));
 				if (dist < car->getRadius() + obstacles[i]->getRadius()) {
-					isDead = true;
+					
 					car->setTexture(nullptr);
 					car->setPos(prevPos);
+					isDead = true;
 				}
 
 			}
@@ -167,7 +172,9 @@ void SceneA::Update(const float deltaTime) {
 				printf("Can't open textures/flappybird.png\n");
 				
 			}*/
+			
 			car->setTexture(nullptr);
+			isDead = true;
 
 			//car->setPos(prevPos);
 
@@ -208,6 +215,12 @@ void SceneA::Update(const float deltaTime) {
 			isDReleased = false;
 		}
 	}
+
+	/*if (isWReleased == true && isAReleased == true && isSReleased == true && isDReleased == true) {
+		car->isMoving(false);
+	}*/
+
+	
 
 
 	if (car->getIs_Moving() == false) {
@@ -279,7 +292,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 	else if (sdlEvent.type == SDL_EventType::SDL_KEYUP) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) {
 			
-			car->ApplyForce(Vec3(0.0f, -10.0f, 0.0f));
+			car->ApplyForce(Vec3(0.0f, -15.0f, 0.0f));
 
 			isWReleased = true;
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
@@ -307,7 +320,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_A) {
 			
 			isAReleased = true;
-			car->ApplyForce(Vec3(10.0f, 0.0f, 0.0f));
+			car->ApplyForce(Vec3(20.0f, 0.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
 			/*if (abs(car->getVelocity().x) >= 1.0f) {
@@ -333,7 +346,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_S) {
 
 			isSReleased = true;
-			car->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
+			car->ApplyForce(Vec3(0.0f, 15.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
 			/*if (abs(car->getVelocity().y) <= 1.0f) {
@@ -359,7 +372,7 @@ void SceneA::HandleEvents(const SDL_Event& sdlEvent) {
 		if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_D) {
 
 			isDReleased = true;
-			car->ApplyForce(Vec3(-10.0f, 0.0f, 0.0f));
+			car->ApplyForce(Vec3(-20.0f, 0.0f, 0.0f));
 			//car->setVelocity(Vec3(0.0f, 0.0f, 0.0f));
 
 			/*if (abs(car->getVelocity().x) <= 1.0f) {
