@@ -21,6 +21,7 @@ private:
 		MAINMENU,
 		GAMEOVER,
 		SCENEA,
+		YOUWIN
 	};
 	class Window* windowPtr;
 	class Timer* timer;

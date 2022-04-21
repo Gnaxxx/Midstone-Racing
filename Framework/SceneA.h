@@ -20,6 +20,7 @@ private:
 	std::vector<Body*> tracks;
 	std::vector<Body*> obstacles;
 	bool isDead = false;
+	bool isWon = false;
 
 	bool gameStart = false;
 	
@@ -41,6 +42,7 @@ public:
 	//void arrive(Body* target, Body* character);
 
 	bool getIsDead() { return isDead; }
+	bool getIsWon() { return isWon; }
 };
 
 #endif

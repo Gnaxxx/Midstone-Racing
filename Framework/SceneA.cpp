@@ -135,7 +135,13 @@ void SceneA::OnDestroy() {}
 
 void SceneA::Update(const float deltaTime) {
 
-	std::cout << "(" << car->getVelocity().x << ", " << car->getVelocity().y <<  ")" << std::endl;
+	//std::cout << "(" << car->getPos().x << ", " << car->getPos().y <<  ")" << std::endl;
+	if (isWon == true) {
+		std::cout << "You Won" << std::endl;
+	}
+	else {
+		std::cout << "You Have not Won" << std::endl;
+	}
 
 	for (int i = 0; i < tracks.size(); ++i) {
 		tracks[i]->Update(deltaTime);
@@ -144,6 +150,8 @@ void SceneA::Update(const float deltaTime) {
 	for (int i = 0; i < obstacles.size(); ++i) {
 		obstacles[i]->Update(deltaTime);
 	}
+
+	// Collision and losing screen
 
 	for (int i = 0; i < tracks.size(); ++i) {
 
@@ -308,6 +316,13 @@ void SceneA::Update(const float deltaTime) {
 	}
 
 	enemy->Update(deltaTime);
+
+	//Winning Screen
+
+	if (car->getPos().y >= 52.0f) {
+		isWon = true;
+	}
+
 
 }
 

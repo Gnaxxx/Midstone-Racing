@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "MainMenu.h"
 #include "GameOver.h"
+#include "YouWin.h"
 #include <iostream>
 
 GameManager::GameManager() {
@@ -99,6 +100,10 @@ void GameManager::GetEvents() {
 			BuildScene(GAMEOVER);
 		}
 
+		else if (sceneA && sceneA->getIsWon()) {
+			BuildScene(YOUWIN);
+		}
+
 		else if (sdlEvent.type == SDL_KEYDOWN) {
 			switch (sdlEvent.key.keysym.scancode) {
 			case SDL_SCANCODE_ESCAPE:
@@ -164,6 +169,11 @@ void GameManager::BuildScene(SCENE_NUMBER scene) {
 	case SCENEA:
 		currentScene = new SceneA(windowPtr->GetSDL_Window());
 		sceneA = (SceneA*) currentScene;
+		status = currentScene->OnCreate();
+		break;
+
+	case YOUWIN:
+		currentScene = new YouWin(windowPtr->GetSDL_Window());
 		status = currentScene->OnCreate();
 		break;
 
