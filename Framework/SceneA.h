@@ -38,6 +38,7 @@ public:
 	void Update(const float time);
 	void Render();
 	void HandleEvents(const SDL_Event& sdlEvent);
+	//void arrive(Body* target, Body* character);
 
 	bool getIsDead() { return isDead; }
 };

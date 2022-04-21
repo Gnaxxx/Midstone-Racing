@@ -26,7 +26,7 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 	car = new Body(Vec3(12.75f, 5.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
 	car->setRadius(0.14f);
 
-	enemy = new Body(Vec3(12.25f, 4.4f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0);
+	enemy = new Body(Vec3(12.2f, 4.4f, 0.0f), Vec3(0.0f, 0.5f, 0.0f), Vec3(0.0f, 2.0f, 0.0f), 2.0);
 	enemy->setRadius(0.14f);
 
 	for (int i = 0; i < 20; ++i) {
@@ -39,6 +39,7 @@ SceneA::SceneA(SDL_Window* sdlWindow_) {
 	obstacles.push_back(new Body(Vec3(12.0f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	obstacles.push_back(new Body(Vec3(12.3f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
 	obstacles.push_back(new Body(Vec3(13.5f, 18.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), 2.0));
+
 
 	for (int i = 0; i < obstacles.size(); ++i) {
 		obstacles[i]->setRadius(0.14f);
@@ -75,12 +76,12 @@ bool SceneA::OnCreate() {
 		return false;
 	}
 
-	/*Vec3 upperLeft(0.0f, 0.0f, 0.0f); //Screen Coords
-	Vec3 lowerRight(static_cast<float>(carImage->w), static_cast<float>(carImage->h), 0.0f);
-	Vec3 ulWorld = invProjectionMatrix * upperLeft;
-	Vec3 lrWorld = invProjectionMatrix * lowerRight;
-	Vec3 worldCoordsFromScreenCoords = lrWorld - ulWorld;
-	float carRad = worldCoordsFromScreenCoords.x / 2.0f;
+	/*Vec3 carUpperLeft(0.0f, 0.0f, 0.0f); //Screen Coords
+	Vec3 carLowerRight(static_cast<float>(carImage->w), static_cast<float>(carImage->h), 0.0f);
+	Vec3 carUlWorld = invProjectionMatrix * carUpperLeft;
+	Vec3 carLrWorld = invProjectionMatrix * carLowerRight;
+	Vec3 carWorldCoordsFromScreenCoords = carLrWorld - carUlWorld;
+	float carRad = carWorldCoordsFromScreenCoords.x / 2.0f;
 	car->setRadius(carRad);*/
 	car->setTexture(carTexture);
 
@@ -111,7 +112,15 @@ bool SceneA::OnCreate() {
 		
 	}
 
+	/*Vec3 obstacleUpperLeft(0.0f, 0.0f, 0.0f); //Screen Coords
+	Vec3 obstacleLowerRight(static_cast<float>(obstacleImage->w), static_cast<float>(obstacleImage->h), 0.0f);
+	Vec3 obstacleUlWorld = invProjectionMatrix * obstacleUpperLeft;
+	Vec3 obstacleLrWorld = invProjectionMatrix * obstacleLowerRight;
+	Vec3 obstacleWorldCoordsFromScreenCoords = obstacleLrWorld - obstacleUlWorld;
+	float obstacleRad = obstacleWorldCoordsFromScreenCoords.x / 2.0f;*/
+
 	for (int i = 0; i < obstacles.size(); ++i) {
+		//obstacles[i]->setRadius(obstacleRad);
 		obstacles[i]->setTexture(obstacleTexture);
 	}
 
@@ -148,7 +157,6 @@ void SceneA::Update(const float deltaTime) {
 					
 					car->setTexture(nullptr);
 					car->setPos(prevPos);
-					isDead = true;
 				}
 
 			}
@@ -237,8 +245,34 @@ void SceneA::Update(const float deltaTime) {
 	//AI stuff...
 
 	if (gameStart == true) {
+
+		for (int i = 0; i < obstacles.size(); i++) {
+			Vec3 direction = obstacles[i]->getPos() - enemy->getPos();
+			float AISpeed = 0.0f;
+			//float maxSpeed = VMath::mag(AI->getVelocity());
+			Vec3 maxVel = enemy->getVelocity();
+			float slowRadius = 1.35f;
+			float distance = VMath::mag(direction);
+			if (distance < obstacles[i]->getRadius()) {
+				enemy->setAccel(Vec3(0.0f, 0.0f, 0.0f));
+			}
+			if (distance > slowRadius) {
+				enemy->setVelocity(maxVel);
+			}
+			else {
+				AISpeed = VMath::mag(maxVel) * distance / slowRadius;
+			}
+			Vec3 AIVelocity = direction;
+			VMath::normalize(AIVelocity);
+			AIVelocity *= AISpeed;
+
+			Vec3 result = -AIVelocity;
+			result /= 0.1f;
+
+			enemy->setAccel(result);
+		}
 		//printf("yes");
-		Vec3 enemyPrevPos;
+		/*Vec3 enemyPrevPos;
 
 		enemy->ApplyForce(Vec3(0.0f, 10.0f, 0.0f));
 
@@ -268,7 +302,7 @@ void SceneA::Update(const float deltaTime) {
 					}
 				}
 			}
-		}
+		}*/
 
 
 	}
@@ -408,8 +442,8 @@ void SceneA::Render() {
 	for (int i = 0; i < obstacles.size(); ++i) {
 		screenCoords = projectionMatrix * obstacles[i]->getPos();
 		SDL_QueryTexture(obstacles[i]->getTexture(), nullptr, nullptr, &w, &h);
-		square.x = static_cast<int>(screenCoords.x);
-		square.y = static_cast<int>(screenCoords.y);
+		square.x = static_cast<int>(screenCoords.x) - (w / 2);
+		square.y = static_cast<int>(screenCoords.y) - (h / 2);
 		square.w = w;
 		square.h = h;
 		SDL_RenderCopyEx(renderer, obstacles[i]->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
@@ -440,8 +474,8 @@ void SceneA::Render() {
 
 	screenCoords = projectionMatrix * car->getPos();
 	SDL_QueryTexture(car->getTexture(), nullptr, nullptr, &w, &h);
-	square.x = static_cast<int>(screenCoords.x);
-	square.y = static_cast<int>(screenCoords.y);
+	square.x = static_cast<int>(screenCoords.x) - (w / 6);
+	square.y = static_cast<int>(screenCoords.y) - (h / 6);
 	square.w = w / 3;
 	square.h = h / 3;
 	//SDL_RenderCopyEx(renderer, car->getTexture(), nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
@@ -465,6 +499,7 @@ void SceneA::Render() {
 
 	//SDL_RenderPresent(renderer);
 }
+
 
 /*
 //player cannot run off screen (Screen Collision)
