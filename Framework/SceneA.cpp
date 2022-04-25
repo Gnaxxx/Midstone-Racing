@@ -275,7 +275,7 @@ void SceneA::Update(const float deltaTime) {
 			AIVelocity *= AISpeed;
 
 			Vec3 result = -AIVelocity;
-			result /= 0.1f;
+			//result /= 0.1f;
 
 			enemy->setAccel(result);
 		}

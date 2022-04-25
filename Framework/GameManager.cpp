@@ -96,12 +96,12 @@ void GameManager::GetEvents() {
 			return;
 		}
 
-		else if (sceneA && sceneA->getIsDead()) {
-			BuildScene(GAMEOVER);
+		else if (sceneA && sceneA->getIsWon() && !sceneA->getIsDead()) {
+			BuildScene(YOUWIN);
 		}
 
-		else if (sceneA && sceneA->getIsWon()) {
-			BuildScene(YOUWIN);
+		else if (sceneA && sceneA->getIsDead()) {
+			BuildScene(GAMEOVER);
 		}
 
 		else if (sdlEvent.type == SDL_KEYDOWN) {
