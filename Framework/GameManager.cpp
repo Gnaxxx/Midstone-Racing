@@ -96,7 +96,7 @@ void GameManager::GetEvents() {
 			return;
 		}
 
-		else if (sceneA && sceneA->getIsWon() && !sceneA->getIsDead()) {
+		else if (sceneA && sceneA->getIsWon()) {
 			BuildScene(YOUWIN);
 		}
 

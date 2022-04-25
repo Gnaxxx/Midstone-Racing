@@ -64,8 +64,8 @@ void YouWin::Render() {
 	screenCoords = projectionMatrix * youWin->getPos();
 	square.x = (int)screenCoords.x; /// We must update this with C11 typecasting - SSF
 	square.y = (int)screenCoords.y;
-	square.w = 30;
-	square.h = 30;
+	square.w = 10;
+	square.h = 10;
 	SDL_BlitSurface(youWin->getImage(), nullptr, screenSurface, &square);
 
 	SDL_UpdateWindowSurface(window);
